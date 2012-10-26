@@ -1,0 +1,9 @@
+{application, emp_tcpi,
+ [ 
+    {description, "TCP interface support for EMP."},
+    {vsn, "1.0.0"},
+    {registered, [emp_tcpi_server]},
+    {applications, [ kernel, stdlib ]},
+    {mod, { emp_tcpi_app, []} },
+    {env, [{port,9090}] }
+ ]}.
