@@ -17,7 +17,7 @@
 %% License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %% ----------------------------------------------------------------------------
 %% @doc 
-%%  
+%%  Handle connection requests and spawn clients to handle them.
 %% @end
 %% ----------------------------------------------------------------------------
 -module(emp_tcpi_server).

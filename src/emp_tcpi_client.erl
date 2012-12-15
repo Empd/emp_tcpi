@@ -17,12 +17,13 @@
 %% License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %% ----------------------------------------------------------------------------
 %% @doc 
-%%  
+%%  The client that is spawn off to handle an individual TCP connection for
+%%	a particular user.
 %% @end
 %% ----------------------------------------------------------------------------
 -module(emp_tcpi_client).
 
--include_lib("emp_core/include/emptypes.hrl").
+-include_lib("$EMP_ROOT/include/emptypes.hrl").
 
 -export([init_conn/1]). %check_json/1]).
 
@@ -83,7 +84,7 @@ verifyConnection( Socket, Tries ) when Tries > 0 ->
 %% Receives client data forever.
 %% TODO recognize the end of a JSON encoding and an invalid JSON encoding so that 
 %% we can handle commands larger than 1 packet.  Use receive_until/3.
--spec receive_main(gen_tcp:socket(), SessionId::'STATEID'()) -> any().
+-spec receive_main(gen_tcp:socket(), SessionId::'UUID'()) -> any().
 
 receive_main(Socket, SessionId) ->
     case receive_fun(Socket, infinity, SessionId) of
@@ -101,7 +102,7 @@ receive_main(Socket, SessionId) ->
 %% If error in receive_fun it is propogated up
 -spec receive_until(gen_tcp:socket(), 
                     fun((DataSoFar :: string()) -> {boolean(), Ret}), 
-                    SessionId::'STATEID'()) -> 
+                    SessionId::'UUID'()) -> 
             {ok, Ret, Data :: string()} | {error, Reason :: atom()} when Ret::any().
 receive_until(Socket, DataDoneFun, SessionId) -> 
     receive_until(Socket, DataDoneFun, SessionId, []).
@@ -123,8 +124,7 @@ receive_until(Socket, DataDoneFun, SessionId, Sofar) ->
 %% If Timeout is not infinity, this might return {error, timeout}.
 %% If we receive a system command from someone else, jump to that
 %% In other words, calls here may get interruptedby a pending system message
-%% TODO Put type of SessionId here
--spec receive_fun(gen_tcp:socket(), timeout(), SessionId::'STATEID'()) -> 
+-spec receive_fun(gen_tcp:socket(), timeout(), SessionId::'UUID'()) -> 
           {ok, Data :: string()} | {error, Reason :: any()}. 
 receive_fun(Socket, Timeout, SessionId) ->
     inet:setopts(Socket, [{active,once}]),
