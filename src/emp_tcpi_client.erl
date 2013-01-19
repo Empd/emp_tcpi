@@ -23,7 +23,7 @@
 %% ----------------------------------------------------------------------------
 -module(emp_tcpi_client).
 
--include_lib("$EMP_ROOT/include/emptypes.hrl").
+-include_lib("empd/include/emptypes.hrl").
 
 -export([init_conn/1]). %check_json/1]).
 
@@ -95,28 +95,26 @@ receive_main(Socket, SessionId) ->
         Other -> Other % errors, shutdown and whatnot.  Will drop the connection.
     end.
 
-
-
 %% Keeps receiving data until DataDoneFun returns something other than false (= not done).
 %% Return value is {DataDoneFunRetValue, Data}
 %% If error in receive_fun it is propogated up
--spec receive_until(gen_tcp:socket(), 
-                    fun((DataSoFar :: string()) -> {boolean(), Ret}), 
-                    SessionId::'UUID'()) -> 
-            {ok, Ret, Data :: string()} | {error, Reason :: atom()} when Ret::any().
-receive_until(Socket, DataDoneFun, SessionId) -> 
-    receive_until(Socket, DataDoneFun, SessionId, []).
-
-receive_until(Socket, DataDoneFun, SessionId, Sofar) ->
-    case receive_fun(Socket, infinity, SessionId) of
-        {ok, D} ->
-            Data = D ++ Sofar,
-            case DataDoneFun(Data) of
-                false -> receive_until(Socket, DataDoneFun, SessionId, Data);
-                Ret -> {ok, Ret, Data}
-            end;
-        {error, Reason} -> {error, Reason}
-    end.
+%% -spec receive_until(gen_tcp:socket(), 
+%%                     fun((DataSoFar :: string()) -> {boolean(), Ret}), 
+%%                     SessionId::'UUID'()) -> 
+%%             {ok, Ret, Data :: string()} | {error, Reason :: atom()} when Ret::any().
+%% receive_until(Socket, DataDoneFun, SessionId) -> 
+%%     receive_until(Socket, DataDoneFun, SessionId, []).
+%% 
+%% receive_until(Socket, DataDoneFun, SessionId, Sofar) ->
+%%     case receive_fun(Socket, infinity, SessionId) of
+%%         {ok, D} ->
+%%             Data = D ++ Sofar,
+%%             case DataDoneFun(Data) of
+%%                 false -> receive_until(Socket, DataDoneFun, SessionId, Data);
+%%                 Ret -> {ok, Ret, Data}
+%%             end;
+%%         {error, Reason} -> {error, Reason}
+%%     end.
 
 
 
